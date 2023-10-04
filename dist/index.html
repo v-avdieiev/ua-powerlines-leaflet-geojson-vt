@@ -57,6 +57,9 @@ var osmHOT = L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
   maxZoom: 19,
   attribution: osmAttribution + " | " + ' contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
 });
+var osm_fr = L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", {
+  attribution: '<a href="https://openstreetmap.fr" target="_blank">OpenStreetMap France</a>'
+});
 var osm_de = L.tileLayer("https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png", {
   attribution: '<a href="https://openstreetmap.de" target="_blank">OpenStreetMap Deutschland</a>'
 });
@@ -131,7 +134,7 @@ var white = L.tileLayer("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAA
 
 // Map
 var leafletMap = L.map("map", {
-  layers: [osm_de],
+  layers: [osm_topo],
   minZoom: 2,
   maxZoom: 17,
   fullscreenControl: true,
@@ -160,6 +163,27 @@ var ZoomViewer = L.Control.extend({
   }
 });
 var zoomViewerControl = new ZoomViewer().addTo(leafletMap);
+var basemaps = {
+  OpenStreetMap: osm,
+  "OpenStreetMap.HOT": osmHOT,
+  "OpenStreetMap - DE": osm_de,
+  "OpenStreetMap - FR": osm_fr,
+  OpenTopoMap: osm_topo,
+  "🚴 CycLOSM": cyclosm,
+  "Esri Topo": esri_topo,
+  "Esri Imagery": esri_image,
+  "Visicom Base": visicom_base,
+  "Visicom Print": visicom_print,
+  "Carto Light All": cartoLightAll,
+  "Carto Light No Lables": cartoLightNoLabels,
+  "Carto Light Only Lables": cartoLightOnlyLabels,
+  "Without background": white,
+  "🌡 Temperature, [-40, 40] °C": temperature_map,
+  "💨 Wind speed, [0, 100] m/s": wind_map,
+  "☁️ Clouds, [0, 100] %": clouds_map,
+  "🌧 Precipitation, [0, 60] mm/h": precipitation_map,
+  "Pressure, [950, 1070] hPa": pressure_map
+};
 
 // Title
 var title = L.control();
@@ -172,7 +196,7 @@ title.onAdd = function (leafletMap) {
   return this._div;
 };
 title.update = function (props) {
-  this._div.innerHTML = "Map 🗺 owerlays:";
+  this._div.innerHTML = "".concat(Object.keys(basemaps).length, " maps & 2 owerlays");
 };
 title.addTo(leafletMap);
 var data = {
@@ -9587,27 +9611,8 @@ var tileLayer = L.canvasTiles().params({
   padding: 5
 }).drawing(drawingOnCanvas);
 tileLayer.redraw();
+tileLayer.addTo(leafletMap);
 var pad = 0;
-var basemaps = {
-  OpenStreetMap: osm,
-  "OpenStreetMap.HOT": osmHOT,
-  "OpenStreetMap - DE": osm_de,
-  OpenTopoMap: osm_topo,
-  "🚴 CycLOSM": cyclosm,
-  "Esri Topo": esri_topo,
-  "Esri Imagery": esri_image,
-  "Visicom Base": visicom_base,
-  "Visicom Print": visicom_print,
-  "Carto Light All": cartoLightAll,
-  "Carto Light No Lables": cartoLightNoLabels,
-  "Carto Light Only Lables": cartoLightOnlyLabels,
-  "Without background": white,
-  "🌡 Temperature, [-40, 40] °C": temperature_map,
-  "💨 Wind speed, [0, 100] m/s": wind_map,
-  "☁️ Clouds, [0, 100] %": clouds_map,
-  "🌧 Precipitation, [0, 60] mm/h": precipitation_map,
-  "Pressure, [950, 1070] hPa": pressure_map
-};
 var overlaymaps = {
   "UA ⚡️ Powerlines": tileLayer,
   "EU countries": L.geoJson(euCountries, {})
